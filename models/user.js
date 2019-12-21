@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
-const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
+
+const SALT  = bcrypt.genSaltSync(10);
 
 const userSchema = new mongoose.Schema(
   {
@@ -29,14 +31,19 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true
     },
-    hashed_password: {
+    password: {
       type: String,
       required: true
     },
-    salt: String,
     about: {
       type: String
     },
+    is_admin: {
+      type: Boolean,
+      default: false
+    },
+
+    // to be removed
     role: {
       type: Number,
       default: 0
@@ -48,43 +55,25 @@ const userSchema = new mongoose.Schema(
     resetPasswordLink: {
       data: String,
       default: ""
+    },
+    agency: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Agency"
     }
   },
   { timestamps: true }
 );
 
-userSchema
-  .virtual("password")
-  .set(function(password) {
-    // create temporary variable called _password
-    this._password = password;
-    // generate salt
-    this.salt = this.makeSalt();
-    // encryptPassword
-    this.hashed_password = this.encryptPassword(password);
-  })
-  .get(function() {
-    return this._password;
-  });
-
-userSchema.methods = {
-  authenticate: function(plainText) {
-    return this.encryptPassword(plainText) === this.hashed_password;
-  },
-  encryptPassword: function(password) {
-    if (!password) return "";
-    try {
-      return crypto
-        .createHmac("sha1", this.salt)
-        .update(password)
-        .digest("hex");
-    } catch (err) {
-      return "";
-    }
-  },
-  makeSalt: function() {
-    return Math.round(new Date().valueOf() * Math.random()) + "";
+userSchema.pre("save", function(next) {
+  if (!this.isModified("password")) {
+    return next();
   }
+  this.password = bcrypt.hashSync(this.password, SALT);
+  next();
+});
+
+userSchema.methods.comparePassword = function(plaintext) {
+  return bcrypt.compareSync(plaintext, this.password);
 };
 
 module.exports = mongoose.model("User", userSchema);

@@ -31,7 +31,8 @@ exports.signin = async (req, res) => {
       return res.status(400).json({ error: 1, msg: "User not found. Please signup." });
     }
     // authenticate
-    if (!user.authenticate(password)) {
+    const match = await user.comparePassword(password)
+    if (!match) {
       return res.status(400).json({  error: 1, msg: "Invalid credentials." });
     }
 
