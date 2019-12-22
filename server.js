@@ -41,6 +41,7 @@ app.use("/api/v1", authRoutes);
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", require("./routes/category"));
 app.use("/api/v1", require("./routes/tag"));
+app.use("/api/v1/agency", require("./routes/agency"));
 
 // port
 const port = process.env.PORT || 8000;
