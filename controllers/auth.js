@@ -3,7 +3,7 @@ const shortId = require("shortid");
 const jwt = require("jsonwebtoken");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 
-const registerUser = async body => {
+const registerUser = async (body, returnUserObject = false) => {
   try {
     const { name, email, password } = body;
     const user = await User.findOne({ email });
@@ -15,6 +15,10 @@ const registerUser = async body => {
 
     const newUser = new User({ name, email, password, username, profile });
     await newUser.save();
+
+    if (returnUserObject) {
+      return newUser;
+    }
 
     return { success: 1, msg: "Registered Successfully!" };
   } catch (err) {
