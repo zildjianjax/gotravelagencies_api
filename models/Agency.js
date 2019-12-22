@@ -12,18 +12,18 @@ const AgencySchema = new mongoose.Schema({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "user"
+    ref: "User"
   },
   members: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user"
+      ref: "User"
     }
   ],
   followers: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user"
+      ref: "User"
     }
   ],
   address: {
