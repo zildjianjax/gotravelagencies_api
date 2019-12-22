@@ -14,7 +14,7 @@ exports.formidableForm = async (req, res, next) => {
       });
     }
 
-    req.body = { err, fields, files };
+    req.body = { fields, files };
     next();
   })
 }
