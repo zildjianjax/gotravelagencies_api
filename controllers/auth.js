@@ -3,19 +3,40 @@ const shortId = require("shortid");
 const jwt = require("jsonwebtoken");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 
+const registerUser = async body => {
+  try {
+    const { name, email, password } = body;
+    const user = await User.findOne({ email });
+    if (user) {
+      return { error: 1, msg: "Email already taken!" };
+    }
+    const username = shortId.generate();
+    const profile = `${process.env.CLIENT_URL}/profile/${username}`;
+
+    const newUser = new User({ name, email, password, username, profile });
+    await newUser.save();
+
+    return { success: 1, msg: "Registered Successfully!" };
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+exports.registerUser = registerUser;
 /**
  * @api {post} /register Register
  * @apiName PostRegister
  * @apiGroup Auth
  * @apiVersion 0.1.0
- * 
+ *
  * @apiParam {String} [name] Name of the user.
  * @apiParam {String} email Email of the user.
  * @apiParam {String} password Password of the user.
- * 
+ *
  * @apiSuccess {Number} success Successful response.
  * @apiSuccess {String} msg Response message.
- * 
+ *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
@@ -25,18 +46,13 @@ const { errorHandler } = require("../helpers/dbErrorHandler");
  */
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ error: 1, msg: "Email already taken!" });
+    user = await registerUser(req.body);
+
+    if (user.error) {
+      return res.status(400).json(user);
     }
-    const username = shortId.generate();
-    const profile = `${process.env.CLIENT_URL}/profile/${username}`;
 
-    const newUser = new User({ name, email, password, username, profile });
-    await newUser.save();
-
-    return res.json({ success: 1, msg: "Signup success! Please log in." });
+    return res.json(user);
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
@@ -48,22 +64,22 @@ exports.register = async (req, res) => {
  * @apiName PostLogin
  * @apiGroup Auth
  * @apiVersion 0.1.0
- * 
+ *
  * @apiParam {String} email Email of the user.
  * @apiParam {String} password Password of the user.
- * 
+ *
  * @apiSuccess {String} token Token of user generated from JWT.
  * @apiSuccess {Object} user User object.
- * 
+ *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
  *       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZGZmNjYzYTU3YThkMDM0NTg3MTZmYTYiLCJpYXQiOjE1NzcwMTg5NDQsImV4cCI6MTU3NzEwNTM0NH0.nklAZL-1p63ISa0JRjAMbu7jNxS3v-0K-sjAtrlGtiI",
  *       "user": {
  *          "_id": "5dff663a57a8d03488715fa6",
-*           "name": "Jax",
-*           "username": "nzurhr1t",
-*           "role": 0
+ *           "name": "Jax",
+ *           "username": "nzurhr1t",
+ *           "role": 0
  *        }
  *     }
  */
@@ -73,13 +89,15 @@ exports.login = async (req, res) => {
     // check if there's a user
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: 1, msg: "User not found. Please signup." });
+      return res
+        .status(400)
+        .json({ error: 1, msg: "User not found. Please signup." });
     }
-    
+
     // authenticate
-    const match = await user.comparePassword(password)
+    const match = await user.comparePassword(password);
     if (!match) {
-      return res.status(400).json({  error: 1, msg: "Invalid credentials." });
+      return res.status(400).json({ error: 1, msg: "Invalid credentials." });
     }
 
     // create token
@@ -106,10 +124,10 @@ exports.login = async (req, res) => {
  * @apiName GetLogout
  * @apiGroup Auth
  * @apiVersion 0.1.0
- * 
+ *
  * @apiSuccess {Number} success Is success response?
  * @apiSuccess {String} msg Message.
- * 
+ *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
@@ -120,7 +138,7 @@ exports.login = async (req, res) => {
 exports.logout = (req, res) => {
   res.clearCookie("token");
   res.json({
-    success: 1, 
+    success: 1,
     msg: "Logout success"
   });
 };
