@@ -2,6 +2,26 @@ const User = require("../models/user");
 const shortId = require("shortid");
 const jwt = require("jsonwebtoken");
 
+/**
+ * @api {post} /signup Register
+ * @apiName PostSignUp
+ * @apiGroup Auth
+ * @apiVersion 0.1.0
+ * 
+ * @apiParam {String} [name] Name of the user.
+ * @apiParam {String} email Email of the user.
+ * @apiParam {String} password Password of the user.
+ * 
+ * @apiSuccess {Number} success Successful response.
+ * @apiSuccess {String} msg Response message.
+ * 
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "success": 1,
+ *       "msg": "Signup success! Please log in."
+ *     }
+ */
 exports.signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -22,6 +42,28 @@ exports.signup = async (req, res) => {
   }
 };
 
+/**
+ * @api {post} /signin Sign In
+ * @apiName PostSignIn
+ * @apiGroup Auth
+ * @apiVersion 0.1.0
+ * 
+ * @apiParam {String} email Email of the user.
+ * @apiParam {String} password Password of the user.
+ * 
+ * @apiSuccess {String} token Token of user generated from JWT.
+ * @apiSuccess {Object} user User object.
+ * 
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "token": 1,
+ *       "user": {
+ *          "_id": "123456sadasd",
+ *          "name": John Doe
+ *        }
+ *     }
+ */
 exports.signin = async (req, res) => {
   try {
     const { email, password } = req.body;
