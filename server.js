@@ -7,7 +7,6 @@ const mongoose = require("mongoose");
 const path = require("path");
 require("dotenv").config();
 // bring routes
-const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 
 // app
@@ -37,7 +36,7 @@ app.use('/api/docs', express.static("doc"))
 
 // routes middleware
 app.use("/api/blog", require("./routes/blog"));
-app.use("/api/v1", authRoutes);
+app.use("/api/v1/auth", require("./routes/auth"));
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", require("./routes/category"));
 app.use("/api/v1", require("./routes/tag"));

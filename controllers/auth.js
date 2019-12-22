@@ -1,10 +1,11 @@
 const User = require("../models/user");
 const shortId = require("shortid");
 const jwt = require("jsonwebtoken");
+const { errorHandler } = require("../helpers/dbErrorHandler");
 
 /**
- * @api {post} /signup Register
- * @apiName PostSignUp
+ * @api {post} /register Register
+ * @apiName PostRegister
  * @apiGroup Auth
  * @apiVersion 0.1.0
  * 
@@ -22,7 +23,7 @@ const jwt = require("jsonwebtoken");
  *       "msg": "Signup success! Please log in."
  *     }
  */
-exports.signup = async (req, res) => {
+exports.register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const user = await User.findOne({ email });
@@ -43,8 +44,8 @@ exports.signup = async (req, res) => {
 };
 
 /**
- * @api {post} /signin Sign In
- * @apiName PostSignIn
+ * @api {post} /login Login
+ * @apiName PostLogin
  * @apiGroup Auth
  * @apiVersion 0.1.0
  * 
@@ -57,14 +58,16 @@ exports.signup = async (req, res) => {
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *       "token": 1,
+ *       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZGZmNjYzYTU3YThkMDM0NTg3MTZmYTYiLCJpYXQiOjE1NzcwMTg5NDQsImV4cCI6MTU3NzEwNTM0NH0.nklAZL-1p63ISa0JRjAMbu7jNxS3v-0K-sjAtrlGtiI",
  *       "user": {
- *          "_id": "123456sadasd",
- *          "name": John Doe
+ *          "_id": "5dff663a57a8d03488715fa6",
+*           "name": "Jax",
+*           "username": "nzurhr1t",
+*           "role": 0
  *        }
  *     }
  */
-exports.signin = async (req, res) => {
+exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
     // check if there's a user
@@ -72,6 +75,7 @@ exports.signin = async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: 1, msg: "User not found. Please signup." });
     }
+    
     // authenticate
     const match = await user.comparePassword(password)
     if (!match) {
@@ -90,14 +94,33 @@ exports.signin = async (req, res) => {
       user: { _id, name, username, role }
     });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Internal Server Error");
+    return res.status(400).json({
+      error: 1,
+      msg: errorHandler(err)
+    });
   }
 };
 
-exports.signout = (req, res) => {
+/**
+ * @api {get} /logout Logout
+ * @apiName GetLogout
+ * @apiGroup Auth
+ * @apiVersion 0.1.0
+ * 
+ * @apiSuccess {Number} success Is success response?
+ * @apiSuccess {String} msg Message.
+ * 
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *        "success": 1,
+ *        "msg": "Logout success"
+ *      }
+ */
+exports.logout = (req, res) => {
   res.clearCookie("token");
   res.json({
-    message: "Signout success"
+    success: 1, 
+    msg: "Logout success"
   });
 };
