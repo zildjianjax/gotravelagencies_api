@@ -77,19 +77,19 @@ const AgencySchema = new mongoose.Schema({
     required: true
   },
   logo: {
-    type: String
+    data: Buffer,
+    contentType: String
   },
   cover_photo: {
-    type: String
+    data: Buffer,
+    contentType: String
   },
-  date_created: {
-    type: Date,
-    default: Date.now
-  },
-  date_updated: {
-    type: Date,
-    default: Date.now
-  }
-});
+  gallery: [
+    {
+      data: Buffer,
+      contentType: String
+    }
+  ]
+}, { timestamps: true });
 
-module.exports = Agency = mongoose.model("agency", AgencySchema);
+module.exports = Agency = mongoose.model("Agency", AgencySchema);

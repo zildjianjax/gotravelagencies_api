@@ -33,7 +33,7 @@
   },
   "apidoc": {
     "title": "Go Travel Agencies API documentation",
-    "url" : "https://gotravelagencies.com/api/v1",
+    "url": "https://gotravelagencies.com/api/v1",
     "version": "0.1.0"
   }
 }

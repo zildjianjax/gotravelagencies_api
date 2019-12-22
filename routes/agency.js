@@ -6,7 +6,10 @@ const { all, create } = require("../controllers/agency");
 const { runValidation } = require("../validators");
 const { createValidator } = require("../validators/agency")
 
+// Middlewares
+const { formidableForm } = require("../middlewares/form");
+
 router.get("/all", all);
-router.post("/", createValidator, runValidation, create);
+router.post("/", formidableForm, createValidator, runValidation, create);
 
 module.exports = router;
