@@ -34,7 +34,7 @@ exports.registerUser = registerUser;
  * @apiGroup Auth
  * @apiVersion 0.1.0
  *
- * @apiParam {String} [name] Name of the user.
+ * @apiParam {String} name Name of the user.
  * @apiParam {String} email Email of the user.
  * @apiParam {String} password Password of the user.
  *
