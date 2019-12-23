@@ -106,6 +106,7 @@ exports.create = async (req, res) => {
 
     let agency = new Agency();
     agency.name = agency_name;
+    agency.slug = slugify(agency_name).toLowerCase();
     agency.email = agency_email;
     agency.address = {};
     agency.address.address_line_1 = address_line_1;
