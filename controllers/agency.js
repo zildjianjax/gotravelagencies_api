@@ -5,8 +5,27 @@ const fs = require("fs");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 const { registerUser } = require("./auth");
 
-exports.all = (req, res) => {
-  res.send("Agency API");
+exports.all = async (req, res) => {
+  try {
+    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    const skip = req.query.skip ? parseInt(req.query.skip) : 0;
+
+    const agencies = await Agency.find()
+      .populate("owner", "_id username email profile")
+      .select("-logo")
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(skip);
+
+    return res.json({ success: 1, data: agencies });
+  } catch (err) {
+    console.log(err);
+
+    return res.status(400).json({
+      error: 1,
+      msg: errorHandler(err)
+    });
+  }
 };
 
 /**
