@@ -22,7 +22,7 @@ exports.all = (req, res) => {
  * @apiParam {String} email Email of the user.
  * @apiParam {String} password Password of the user.
  * @apiParam {String} agency_name Name of the agency.
- * @apiParam {String} agency_email Email of the agency.
+ * @apiParam {String} [agency_email] Email of the agency.
  * @apiParam {String} address_line_1 Address line 1 of the agency location.
  * @apiParam {String} [address_line_2] Address line 2 of the agency location.
  * @apiParam {String} country Country of the agency location.
@@ -92,8 +92,10 @@ exports.create = async (req, res) => {
       contact_number
     } = fields;
 
+    const email = agency_email || fields.email;
+
     // Check if agency already registered
-    const existing_agency = await Agency.findOne({ email: agency_email });
+    const existing_agency = await Agency.findOne({ email });
     if (existing_agency) {
       return res.status(400).json({ error: 1, msg: "Agency already taken." });
     }
@@ -107,7 +109,7 @@ exports.create = async (req, res) => {
     let agency = new Agency();
     agency.name = agency_name;
     agency.slug = slugify(agency_name).toLowerCase();
-    agency.email = agency_email;
+    agency.email = email;
     agency.address = {};
     agency.address.address_line_1 = address_line_1;
     agency.address.address_line_2 = address_line_2;
