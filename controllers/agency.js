@@ -172,3 +172,17 @@ exports.create = async (req, res) => {
     });
   }
 };
+
+exports.getLogo = async (req, res) => {
+  try {
+    const slug = req.params.slug.toLowerCase();
+    const agency = await Agency.findOne({ slug }).select("logo");
+    res.set("Content-Type", agency.logo.contentType);
+    res.send(agency.logo.data);
+  } catch (err) {
+    return res.status(400).json({
+      error: 1,
+      msg: errorHandler(err)
+    });
+  }
+};
