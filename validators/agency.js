@@ -22,10 +22,13 @@ exports.createValidator = [
   check("fields.city")
     .notEmpty()
     .withMessage("City is required."),
+  check("fields.state")
+    .notEmpty()
+    .withMessage("State is required."),
   check("fields.zipcode")
     .notEmpty()
     .withMessage("Zip Code is required."),
   check("fields.contact_number")
     .notEmpty()
-    .withMessage("Zip Code is required.")
+    .withMessage("Contact number is required.")
 ];
