@@ -458,28 +458,13 @@ exports.addMember = async (req, res) => {
  * @apiParam {String} user User id of the member you want to add.
  *
  * @apiSuccess {Number} success Successful response.
- * @apiSuccess {Object[]} data Array of user object.
+ * @apiSuccess {String} msg Success message.
  *
  * @apiSuccessExample Success-Response:
  *    HTTP/1.1 200 OK
  *    {
  *      "success": 1,
- *      "data": [
- *        {
- *          "_id": "5e01a6f6c9dccd4f540d7a6f",
- *          "name": "Jax",
- *          "email": "jax@gmail.com",
- *          "username": "uj7vsam2",
- *          "profile": "http://localhost:3000/profile/UJ7VSAM2"
- *        },
- *        {
- *          "_id": "5e01bc89741cc819004bdd74",
- *          "name": "Jax",
- *          "email": "zildjian@gmail.com",
- *          "username": "ultutsi1",
- *          "profile": "http://localhost:3000/profile/UltutSi1"
- *        }
- *      ]
+ *      "msg": "Member successfully removed!"
  *    }
  */
 exports.removeMember = async (req, res) => {
