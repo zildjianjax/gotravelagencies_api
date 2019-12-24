@@ -5,8 +5,8 @@ exports.createValidator = [
     .notEmpty()
     .withMessage("Name is required."),
   check("fields.email")
-  .isEmail()
-  .withMessage("Email is not valid."),
+    .isEmail()
+    .withMessage("Email is not valid."),
   check("fields.password")
     .notEmpty()
     .withMessage("Password is required."),
@@ -37,4 +37,10 @@ exports.updateLogoValidator = [
   check("files.logo")
     .notEmpty()
     .withMessage("Logo is required.")
+];
+
+exports.addMemberValidator = [
+  check("users")
+    .notEmpty()
+    .withMessage("Must pass at least 1 user")
 ];

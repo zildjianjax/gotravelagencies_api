@@ -392,3 +392,59 @@ exports.getAgencyOwner = async (req, res) => {
     });
   }
 };
+
+/**
+ * @api {post} /agency/:slug/members Add members to agency
+ * @apiName PostAddMembers
+ * @apiGroup Agency
+ * @apiVersion 0.1.0
+ * 
+ * @apiParam {String} user User id of the member you want to add.
+ *
+ * @apiSuccess {Number} success Successful response.
+ * @apiSuccess {Object[]} data Array of user object.
+ *
+ * @apiSuccessExample Success-Response:
+ *    HTTP/1.1 200 OK
+ *    {
+ *      "success": 1,
+ *      "data": [
+ *        {
+ *          "_id": "5e01a6f6c9dccd4f540d7a6f",
+ *          "name": "Jax",
+ *          "email": "jax@gmail.com",
+ *          "username": "uj7vsam2",
+ *          "profile": "http://localhost:3000/profile/UJ7VSAM2"
+ *        },
+ *        {
+ *          "_id": "5e01bc89741cc819004bdd74",
+ *          "name": "Jax",
+ *          "email": "zildjian@gmail.com",
+ *          "username": "ultutsi1",
+ *          "profile": "http://localhost:3000/profile/UltutSi1"
+ *        }
+ *      ]
+ *    }
+ */
+exports.addMember = async (req, res) => {
+  try {
+    const slug = req.params.slug.toLowerCase();
+    const { users } = req.body;
+
+    // Check if agency already registered
+    const agency = await Agency.findOneAndUpdate({ slug }, {
+      $addToSet: {
+        members: users
+      }      
+    }, {
+      new: true
+    }).populate("members", "_id name username profile email");
+
+    res.json({ success: 1, data: agency.members });
+  } catch (err) {
+    return res.status(400).json({
+      error: 1,
+      msg: errorHandler(err)
+    });
+  }
+};

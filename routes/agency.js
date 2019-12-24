@@ -6,14 +6,16 @@ const {
   getLogo,
   updateLogo,
   getAgency,
-  getAgencyOwner
+  getAgencyOwner,
+  addMember
 } = require("../controllers/agency");
 
 // Validators
 const { runValidation } = require("../validators");
 const {
   createValidator,
-  updateLogoValidator
+  updateLogoValidator,
+  addMemberValidator
 } = require("../validators/agency");
 
 // Middlewares
@@ -37,5 +39,14 @@ router.put(
   runValidation,
   updateLogo
 ); // Update agency logo
+
+router.post(
+  "/:slug/members",
+  requireSignin,
+  agencyOwner,
+  addMemberValidator,
+  runValidation,
+  addMember
+); // Add member to agency
 
 module.exports = router;
