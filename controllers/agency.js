@@ -448,3 +448,63 @@ exports.addMember = async (req, res) => {
     });
   }
 };
+
+/**
+ * @api {delete} /agency/:slug/members Remove member to agency
+ * @apiName DeleteMember
+ * @apiGroup Agency
+ * @apiVersion 0.1.0
+ * 
+ * @apiParam {String} user User id of the member you want to add.
+ *
+ * @apiSuccess {Number} success Successful response.
+ * @apiSuccess {Object[]} data Array of user object.
+ *
+ * @apiSuccessExample Success-Response:
+ *    HTTP/1.1 200 OK
+ *    {
+ *      "success": 1,
+ *      "data": [
+ *        {
+ *          "_id": "5e01a6f6c9dccd4f540d7a6f",
+ *          "name": "Jax",
+ *          "email": "jax@gmail.com",
+ *          "username": "uj7vsam2",
+ *          "profile": "http://localhost:3000/profile/UJ7VSAM2"
+ *        },
+ *        {
+ *          "_id": "5e01bc89741cc819004bdd74",
+ *          "name": "Jax",
+ *          "email": "zildjian@gmail.com",
+ *          "username": "ultutsi1",
+ *          "profile": "http://localhost:3000/profile/UltutSi1"
+ *        }
+ *      ]
+ *    }
+ */
+exports.removeMember = async (req, res) => {
+  try {
+    const slug = req.params.slug.toLowerCase();
+    const { user } = req.body;
+
+    // Check if agency already registered
+    await Agency.findOneAndUpdate(
+      { slug },
+      {
+        $pull: {
+          members: user
+        }
+      },
+      {
+        new: true
+      }
+    );
+
+    res.json({ success: 1, msg: "Member successfully removed!" });
+  } catch (err) {
+    return res.status(400).json({
+      error: 1,
+      msg: errorHandler(err)
+    });
+  }
+};

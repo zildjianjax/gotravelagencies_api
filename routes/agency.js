@@ -7,7 +7,8 @@ const {
   updateLogo,
   getAgency,
   getAgencyOwner,
-  addMember
+  addMember,
+  removeMember
 } = require("../controllers/agency");
 
 // Validators
@@ -47,6 +48,15 @@ router.post(
   addMemberValidator,
   runValidation,
   addMember
+); // Add member to agency
+
+router.delete(
+  "/:slug/members",
+  requireSignin,
+  agencyOwner,
+  addMemberValidator,
+  runValidation,
+  removeMember
 ); // Add member to agency
 
 module.exports = router;
