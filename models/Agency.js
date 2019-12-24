@@ -5,7 +5,10 @@ const AgencySchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  slug: String,
+  slug: {
+    type: String,
+    unique: true
+  },
   email: {
     type: String,
     required: true,
