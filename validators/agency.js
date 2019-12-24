@@ -40,7 +40,7 @@ exports.updateLogoValidator = [
 ];
 
 exports.addMemberValidator = [
-  check("users")
+  check("user")
     .notEmpty()
     .withMessage("Must pass at least 1 user")
 ];
