@@ -32,3 +32,9 @@ exports.createValidator = [
     .notEmpty()
     .withMessage("Contact number is required.")
 ];
+
+exports.updateLogoValidator = [
+  check("files.logo")
+    .notEmpty()
+    .withMessage("Logo is required.")
+];

@@ -186,3 +186,55 @@ exports.getLogo = async (req, res) => {
     });
   }
 };
+
+/**
+ * @api {post} /agency/:slug/logo Update Agency Logo
+ * @apiName PostUpdateAgencyLogo
+ * @apiGroup Agency
+ * @apiVersion 0.1.0
+ *
+ * @apiDescription Request data must be a formdata, not json.
+ * 
+ * @apiParam {File} logo Logo of the agency.
+ *
+ * @apiSuccess {Number} success Successful response.
+ * @apiSuccess {String} msg Success message.
+ *
+ * @apiSuccessExample Success-Response:
+ *      HTTP/1.1 200 OK
+ *      {
+ *        "success": 1,
+ *        "msg": "Logo updated successfully!"
+ *      }
+ */
+exports.updateLogo = async (req, res) => {
+  try {
+    const { files } = req.body;
+    const slug = req.params.slug.toLowerCase();
+
+    // Check if agency already registered
+    const agency = await Agency.findOne({ slug });
+
+    // photo logic
+    if (files.logo) {
+      if (files.logo.size > 10000000) {
+        return res.status(400).json({
+          error: 1,
+          msg: "Image should be less than 1mb in size."
+        });
+      }
+
+      agency.logo.data = fs.readFileSync(files.logo.path);
+      agency.logo.contentType = files.logo.type;
+    }
+
+    await agency.save();
+
+    res.json({ success: 1, msg: "Logo updated successfully!" });
+  } catch (err) {
+    return res.status(400).json({
+      error: 1,
+      msg: errorHandler(err)
+    });
+  }
+};
