@@ -5,6 +5,51 @@ const fs = require("fs");
 const { errorHandler } = require("../helpers/dbErrorHandler");
 const { registerUser } = require("./auth");
 
+/**
+ * @api {get} /agency/all Get All Agency
+ * @apiName GetAllAgency
+ * @apiGroup Agency
+ * @apiVersion 0.1.0
+ *
+ * @apiSuccess {Number} success Successful response.
+ * @apiSuccess {Object[]} data An array of agency model.
+ *
+ * @apiSuccessExample Success-Response:
+ *    HTTP/1.1 200 OK
+ *    {
+ *      "success": 1,
+ *      "data": [
+ *        {
+ *          "address": {
+ *            "address_line_1": "421 Upper Tulay",
+ *            "address_line_2": "Sitio",
+ *            "country": "Philippines",
+ *            "city": "Minglanilla",
+ *            "state": "Cebu",
+ *            "zipcode": "6046"
+ *          },
+ *          "members": [],
+ *          "followers": [],
+ *          "is_active": true,
+ *          "_id": "5e01a6e8c9dccd4f540d7a6e",
+ *          "gallery": [],
+ *          "name": "Shadow Travel and tours 2",
+ *          "slug": "shadow-travel-and-tours-2",
+ *          "email": "shadowtravelandtours23@gmail.com",
+ *          "contact_number": "09565379056",
+ *          "owner": {
+ *            "_id": "5e01a6e7c9dccd4f540d7a6d",
+ *            "email": "james@gmail.com",
+ *            "username": "dspu36dn",
+ *            "profile": "http://localhost:3000/profile/dspu36Dn"
+ *          },
+ *          "createdAt": "2019-12-24T05:49:28.056Z",
+ *          "updatedAt": "2019-12-24T05:51:42.210Z",
+ *          "__v": 0
+ *        }
+ *      ]
+ *    }
+ */
 exports.all = async (req, res) => {
   try {
     const limit = req.query.limit ? parseInt(req.query.limit) : 10;
@@ -173,6 +218,16 @@ exports.create = async (req, res) => {
   }
 };
 
+/**
+ * @api {get} /agency/:slug/logo Get Agency Logo
+ * @apiName GetAgencyLogo
+ * @apiGroup Agency
+ * @apiVersion 0.1.0
+ *
+ * @apiSuccessExample Success-Response:
+ *    HTTP/1.1 200 OK
+ *    "The logo image"
+ */
 exports.getLogo = async (req, res) => {
   try {
     const slug = req.params.slug.toLowerCase();
@@ -188,13 +243,13 @@ exports.getLogo = async (req, res) => {
 };
 
 /**
- * @api {post} /agency/:slug/logo Update Agency Logo
- * @apiName PostUpdateAgencyLogo
+ * @api {put} /agency/:slug/logo Update Agency Logo
+ * @apiName PutUpdateAgencyLogo
  * @apiGroup Agency
  * @apiVersion 0.1.0
  *
  * @apiDescription Request data must be a formdata, not json.
- * 
+ *
  * @apiParam {File} logo Logo of the agency.
  *
  * @apiSuccess {Number} success Successful response.
@@ -231,6 +286,105 @@ exports.updateLogo = async (req, res) => {
     await agency.save();
 
     res.json({ success: 1, msg: "Logo updated successfully!" });
+  } catch (err) {
+    return res.status(400).json({
+      error: 1,
+      msg: errorHandler(err)
+    });
+  }
+};
+
+/**
+ * @api {get} /agency/:slug Get Agency
+ * @apiName GetAgency
+ * @apiGroup Agency
+ * @apiVersion 0.1.0
+ *
+ * @apiSuccess {Number} success Successful response.
+ * @apiSuccess {Object} data The agency object model.
+ *
+ * @apiSuccessExample Success-Response:
+ *    HTTP/1.1 200 OK
+ *    {
+ *      "success": 1,
+ *      "data": {
+ *        "address": {
+ *          "address_line_1": "421 Upper Tulay",
+ *          "address_line_2": "Sitio",
+ *          "country": "Philippines",
+ *          "city": "Minglanilla",
+ *          "state": "Cebu",
+ *          "zipcode": "6046"
+ *        },
+ *        "members": [],
+ *        "followers": [],
+ *        "is_active": true,
+ *        "_id": "5e01a6e8c9dccd4f540d7a6e",
+ *        "name": "Shadow Travel and tours 2",
+ *        "slug": "shadow-travel-and-tours-2",
+ *        "email": "shadowtravelandtours23@gmail.com",
+ *        "contact_number": "09565379056",
+ *        "owner": {
+ *          "_id": "5e01a6e7c9dccd4f540d7a6d",
+ *          "name": "James",
+ *          "username": "dspu36dn",
+ *          "profile": "http://localhost:3000/profile/dspu36Dn"
+ *        },
+ *        "createdAt": "2019-12-24T05:49:28.056Z",
+ *        "updatedAt": "2019-12-24T05:51:42.210Z",
+ *        "__v": 0
+ *      }
+ *    }
+ */
+exports.getAgency = async (req, res) => {
+  try {
+    const slug = req.params.slug.toLowerCase();
+
+    // Check if agency already registered
+    const agency = await Agency.findOne({ slug })
+      .populate("owner", "_id name username profile")
+      .select("-logo -cover_photo -gallery");
+
+    res.json({ success: 1, data: agency });
+  } catch (err) {
+    return res.status(400).json({
+      error: 1,
+      msg: errorHandler(err)
+    });
+  }
+};
+
+/**
+ * @api {get} /agency/:slug/owner Get Agency Owner
+ * @apiName GetAgencyOwner
+ * @apiGroup Agency
+ * @apiVersion 0.1.0
+ *
+ * @apiSuccess {Number} success Successful response.
+ * @apiSuccess {Object} data The user object of the owner.
+ *
+ * @apiSuccessExample Success-Response:
+ *    HTTP/1.1 200 OK
+ *    {
+ *      "success": 1,
+ *      "data": {
+ *        "_id": "5e01a6e7c9dccd4f540d7a6d",
+ *        "name": "James",
+ *        "username": "dspu36dn",
+ *        "profile": "http://localhost:3000/profile/dspu36Dn"
+ *      }
+ *    }
+ */
+exports.getAgencyOwner = async (req, res) => {
+  try {
+    const slug = req.params.slug.toLowerCase();
+
+    // Check if agency already registered
+    const agency = await Agency.findOne({ slug })
+      .populate("owner", "_id name username profile")
+      .select("owner");
+
+    res.json({ success: 1, data: agency.owner });
   } catch (err) {
     return res.status(400).json({
       error: 1,
