@@ -429,12 +429,12 @@ exports.getAgencyOwner = async (req, res) => {
 exports.addMember = async (req, res) => {
   try {
     const slug = req.params.slug.toLowerCase();
-    const { users } = req.body;
+    const { user } = req.body;
 
     // Check if agency already registered
     const agency = await Agency.findOneAndUpdate({ slug }, {
       $addToSet: {
-        members: users
+        members: user
       }      
     }, {
       new: true
