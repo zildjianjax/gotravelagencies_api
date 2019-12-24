@@ -493,3 +493,52 @@ exports.removeMember = async (req, res) => {
     });
   }
 };
+
+/**
+ * @api {get} /agency/:slug/members Get Agency Members
+ * @apiName GetAgencyMembers
+ * @apiGroup Agency
+ * @apiVersion 0.1.0
+ *
+ * @apiSuccess {Number} success Successful response.
+ * @apiSuccess {Object[]} data Array of user objects.
+ *
+ * @apiSuccessExample Success-Response:
+ *    HTTP/1.1 200 OK
+      {
+        "success": 1,
+        "data": [
+          {
+            "_id": "5e01a6f6c9dccd4f540d7a6f",
+            "name": "Jax",
+            "email": "jax@gmail.com",
+            "username": "uj7vsam2",
+            "profile": "http://localhost:3000/profile/UJ7VSAM2"
+          },
+          {
+            "_id": "5e01bc89741cc819004bdd74",
+            "name": "Jax",
+            "email": "zildjian@gmail.com",
+            "username": "ultutsi1",
+            "profile": "http://localhost:3000/profile/UltutSi1"
+          }
+        ]
+      }
+ */
+exports.getAgencyMembers = async (req, res) => {
+  try {
+    const slug = req.params.slug.toLowerCase();
+
+    // Check if agency already registered
+    const agency = await Agency.findOne({ slug })
+      .populate("members", "_id name username email profile")
+      .select("members");
+
+    res.json({ success: 1, data: agency.members });
+  } catch (err) {
+    return res.status(400).json({
+      error: 1,
+      msg: errorHandler(err)
+    });
+  }
+};

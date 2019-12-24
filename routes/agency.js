@@ -8,7 +8,8 @@ const {
   getAgency,
   getAgencyOwner,
   addMember,
-  removeMember
+  removeMember,
+  getAgencyMembers
 } = require("../controllers/agency");
 
 // Validators
@@ -28,6 +29,7 @@ router.get("/all", all); // Get all agencies
 router.get("/:slug/logo", getLogo); // Get agency logo
 router.get("/:slug", getAgency); // Get agency by slug
 router.get("/:slug/owner", getAgencyOwner); // Get agency owner
+router.get("/:slug/members", getAgencyMembers); // Get agency owner
 
 router.post("/", formidableForm, createValidator, runValidation, create); // Register user and create agency
 
