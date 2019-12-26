@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const slug = require("mongoose-slug-generator")
+mongoose.plugin(slug);
 
 const AgencySchema = new mongoose.Schema({
   name: {
@@ -7,6 +9,8 @@ const AgencySchema = new mongoose.Schema({
   },
   slug: {
     type: String,
+    slug: ["name"],
+    slug_padding_size: 1,
     unique: true
   },
   email: {

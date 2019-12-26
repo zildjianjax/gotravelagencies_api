@@ -1,5 +1,4 @@
 const Agency = require("../models/Agency");
-const slugify = require("slugify");
 const _ = require("lodash");
 const fs = require("fs");
 const { errorHandler } = require("../helpers/dbErrorHandler");
@@ -172,7 +171,6 @@ exports.create = async (req, res) => {
 
     let agency = new Agency();
     agency.name = agency_name;
-    agency.slug = slugify(agency_name).toLowerCase();
     agency.email = email;
     agency.address = {};
     agency.address.address_line_1 = address_line_1;

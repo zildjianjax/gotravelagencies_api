@@ -25,6 +25,7 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mongoose": "^5.8.0",
+    "mongoose-slug-generator": "^1.0.4",
     "morgan": "^1.9.1",
     "nodemon": "^2.0.2",
     "shortid": "^2.2.15",
