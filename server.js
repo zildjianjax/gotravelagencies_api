@@ -12,9 +12,11 @@ const userRoutes = require("./routes/user");
 // app
 const app = express();
 
+const DB = process.env.NODE_ENV.trim() === "test" ? process.env.TEST_DB : process.env.DATABASE;
+
 // db
 mongoose
-  .connect(process.env.DATABASE, {
+  .connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
@@ -23,7 +25,9 @@ mongoose
   .then(() => console.log("DB connected"));
 
 // middlewares
-app.use(morgan("dev"));
+if(process.env.NODE_ENV.trim() !== "test") {
+  app.use(morgan("dev"));
+}
 app.use(bodyParser.json());
 app.use(cookieParser());
 // cors
@@ -32,7 +36,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // api documentation
-app.use('/api/docs', express.static("doc"))
+app.use("/api/docs", express.static("doc"));
 
 // routes middleware
 app.use("/api/blog", require("./routes/blog"));
@@ -47,3 +51,5 @@ const port = process.env.PORT || 8000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+module.exports = app;

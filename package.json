@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "docs": "apidoc -i controllers"
+    "docs": "apidoc -i controllers",
+    "test": "set NODE_ENV=test && mocha --timeout 10000"
   },
   "keywords": [],
   "author": "",
@@ -36,5 +37,10 @@
     "title": "Go Travel Agencies API documentation",
     "url": "https://gotravelagencies.com/api/v1",
     "version": "0.1.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^6.2.2"
   }
 }
