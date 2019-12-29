@@ -12,7 +12,7 @@ chai.use(chaiHttp);
 //Our parent block
 describe("Agencies", async () => {
   beforeEach(async () => {
-    //Before each test we empty the database
+    //Before each test we empty the database test
     return Agency.deleteMany({});
   });
   describe("Sample Test", async () => {
